@@ -62,8 +62,11 @@
         .puzzle-title { margin-bottom: 20px; text-align: center; color: #cc3333; letter-spacing: 2px;}
         #puzzle-container { position: relative; width: 306px; height: 306px; background-color: #444; border: 3px solid #333; border-radius: 4px; box-sizing: border-box; transition: box-shadow 0.5s; }
         
-        /* 更新拼圖底圖為指定圖片 */
-        .puzzle-piece { position: absolute; width: 98px; height: 98px; background-image: url('https://drive.google.com/thumbnail?id=1GDYB_LEUZT8n-MxSnDqXPSzPGu6sBxLB&sz=w1000'); background-size: 300px 300px; cursor: pointer; transition: transform 0.2s ease-in-out; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.3); }
+        .puzzle-piece { 
+            position: absolute; width: 98px; height: 98px; 
+            background-image: url('https://drive.google.com/thumbnail?id=1cG6Igd4sWbwcIc0nF-eKpwY8axhAtHBq&sz=w1000'); /* 替換為指定的未知圖形 */
+            background-size: 300px 300px; cursor: pointer; transition: transform 0.2s ease-in-out; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.3); 
+        }
         
         #piece-8 { display: none; } 
         .glow { box-shadow: 0 0 30px 10px rgba(0, 255, 0, 0.7) !important; animation: pulse 1s infinite alternate; }
@@ -89,6 +92,7 @@
         .bubble::before { content: ""; position: absolute; top: 15px; left: -8px; border-style: solid; border-width: 8px 10px 8px 0; border-color: transparent #fff transparent transparent; }
         .message-time { font-size: 11px; color: #555; margin-left: 8px; margin-bottom: 2px;}
 
+        /* 圖文選單升級：加入圖示與排版 */
         .rich-menu-container { background-color: #fff; display: flex; flex-direction: column; }
         .rich-menu-bar { height: 35px; background-color: #f3f3f3; color: #555; display: flex; align-items: center; justify-content: center; font-size: 13px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; }
         .action-buttons { display: flex; height: 160px; background-color: #fafafa; }
@@ -116,6 +120,7 @@
         @keyframes glitch-anim-1 { 0% { clip-path: inset(20% 0 80% 0); } 20% { clip-path: inset(60% 0 10% 0); } 40% { clip-path: inset(40% 0 50% 0); } 60% { clip-path: inset(80% 0 5% 0); } 80% { clip-path: inset(10% 0 70% 0); } 100% { clip-path: inset(30% 0 40% 0); } }
         @keyframes glitch-anim-2 { 0% { clip-path: inset(10% 0 60% 0); } 20% { clip-path: inset(30% 0 20% 0); } 40% { clip-path: inset(70% 0 10% 0); } 60% { clip-path: inset(20% 0 50% 0); } 80% { clip-path: inset(90% 0 5% 0); } 100% { clip-path: inset(40% 0 30% 0); } }
         
+        /* DOS 系統綠色與發光特效 */
         .reality-text { 
             font-family: "Courier New", Courier, monospace; 
             font-size: 26px; font-weight: bold;
@@ -216,22 +221,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // 獨立出觸發崩潰特效的函數，方便重複呼叫
     window.triggerSystemCrash = function() {
         document.getElementById('stage-glitch').style.display = 'flex';
         const glitchScreen = document.getElementById('glitch-screen');
         const realityScreen = document.getElementById('reality-screen');
         
+        // 初始設定：全黑畫面
         glitchScreen.style.display = 'none';
         realityScreen.style.display = 'none';
 
+        // 時間軸 1：0.8秒後開始劇烈閃爍 (模擬斷電延遲)
         setTimeout(() => {
             glitchScreen.style.display = 'flex';
         }, 800);
 
+        // 時間軸 2：3.3秒後閃爍停止，再次全黑 (系統徹底死亡)
         setTimeout(() => {
             glitchScreen.style.display = 'none';
         }, 3300);
 
+        // 時間軸 3：4.8秒後浮現真實世界的 DOS 提示
         setTimeout(() => {
             realityScreen.style.display = 'block';
         }, 4800);

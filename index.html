@@ -20,6 +20,25 @@
         }
 
         /* =========================================
+           遊戲序幕封面 (繞過自動播放限制、同步音效)
+           ========================================= */
+        #start-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0b0b0b; z-index: 1000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: #888; padding: 20px; box-sizing: border-box; text-align: center;
+            transition: opacity 1s ease-out;
+        }
+        .start-prompt { font-size: 14px; margin-bottom: 30px; line-height: 1.6; letter-spacing: 1px; }
+        .btn-enter-game {
+            background-color: #cc3333; border: none; padding: 15px 30px; font-size: 16px; 
+            font-weight: bold; border-radius: 30px; color: #fff; cursor: pointer;
+            box-shadow: 0 0 15px rgba(204, 51, 51, 0.5); transition: all 0.3s;
+            letter-spacing: 2px;
+        }
+        .btn-enter-game:active { background-color: #aa2222; transform: scale(0.95); }
+
+        /* =========================================
            開發者維修站 (隱藏的彩蛋)
            ========================================= */
         #debug-menu {
@@ -148,6 +167,16 @@
 </head>
 <body>
 
+<audio id="bgm-player" src="https://www.dropbox.com/scl/fi/nobu4xr96ej1pagg2eggy/Cold_Metal_Heartbeat.mp3?rlkey=c1e3klqz5ezft1dms5z9kk47b&st=0a5e1eel&dl=1" loop></audio>
+
+<div id="start-overlay">
+    <div class="start-prompt">
+        流水席大廚波波狸發來了最後的訊息……<br><br>
+        請開啟裝置聲音以獲得最佳沉浸體驗。
+    </div>
+    <button id="btn-start" class="btn-enter-game">點擊入席</button>
+</div>
+
 <div id="debug-menu">
     <div class="debug-title">🛠️ 維修站</div>
     <button class="debug-btn" onclick="skipTo('prologue')">0. 劇情</button>
@@ -182,7 +211,7 @@
         <div class="line-header">
             <span class="header-icon">＜</span>
             <span class="header-center">
-                <img class="header-logo" src="https://drive.google.com/thumbnail?id=1GjDpKbc1ISiYKvk9peVNP4YlgIBnlTu6&sz=w1000" alt="狸想Logo">
+                <img class="header-logo" src="https://drive.google.com/thumbnail?id=1GjDpKbc1ISiYKvk9peVNP4YlgIBnlTu6&sz=w1000" alt="貍想Logo">
                 貍想
             </span>
             <span class="header-icon">≡</span>
@@ -230,8 +259,28 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     
+    const bgm = document.getElementById('bgm-player');
+    const startOverlay = document.getElementById('start-overlay');
+    const btnStart = document.getElementById('btn-start');
+
     /* =========================================
-       0. 開發者跳關邏輯與彩蛋
+       0. 序幕點擊事件：啟動音效與打字機
+       ========================================= */
+    btnStart.addEventListener('click', () => {
+        // 1. 播放配樂
+        bgm.play().catch(err => console.log("播放被攔截:", err));
+        
+        // 2. 讓封面淡出並移除
+        startOverlay.style.opacity = '0';
+        setTimeout(() => {
+            startOverlay.style.display = 'none';
+            // 3. 封面完全消失後，立刻啟動前情提要打字機
+            setTimeout(typeWriter, 500);
+        }, 1000);
+    });
+
+    /* =========================================
+       1. 開發者跳關邏輯與彩蛋
        ========================================= */
     let secretClickCount = 0;
     const debugMenu = document.getElementById('debug-menu');
@@ -257,6 +306,9 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     window.skipTo = function(targetId) {
+        // 跳關時自動把封面關掉
+        startOverlay.style.display = 'none';
+        
         document.getElementById('prologue').style.display = 'none';
         document.getElementById('stage1').style.display = 'none';
         document.getElementById('stage2').style.display = 'none';
@@ -276,9 +328,9 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     /* =========================================
-       1. 前導劇情打字機與按鈕綁定
+       2. 前導劇情打字機與按鈕綁定
        ========================================= */
-    const storyText = "學院最後一次聚會中，流水席大廚波波貍煮完最後一道菜後，留下紙條：\n\n「未來不再有黃磚路了，\n但願大家走出自己的路……」\n\n接著消失在筵席上。\n\n汪汪在疑似染血的紙條底下發現一張未知圖形。";
+    const storyText = "學院最後一次聚會中，流水席大廚波波貍煮完最後一道菜後，留下紙條：\n\n「未來不再有黃磚路了，\n但願大家走出自己的路……」\n\n接著消失在筵席上。\n\n汪汪在疑似染血紙條底下發現一張未知圖形。";
     const textContainer = document.getElementById("prologue-text");
     const startBtn = document.getElementById("start-puzzle-btn");
     const prologueContainer = document.getElementById("prologue");
@@ -303,8 +355,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    setTimeout(typeWriter, 1000);
-
     startBtn.addEventListener("click", () => {
         document.getElementById('prologue').style.display = 'none';
         document.getElementById('stage1').style.display = 'flex';
@@ -312,7 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* =========================================
-       2. 第一關邏輯：華容道 (滑塊拼圖)
+       3. 第一關邏輯：華容道 (滑塊拼圖)
        ========================================= */
     const container = document.getElementById('puzzle-container');
     const size = 3;
@@ -349,7 +399,6 @@ document.addEventListener("DOMContentLoaded", () => {
             container.appendChild(piece);
             pieces.push(piece);
         }
-        // 降低難度：將原本隨機打亂的 100 步改為 15 步
         shufflePuzzle(15);
     }
 
@@ -376,7 +425,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function shufflePuzzle(moves) {
-        let lastPieceMoved = -1; // 防止馬上把拼圖推回原位的防呆機制
+        let lastPieceMoved = -1; 
         for (let i = 0; i < moves; i++) {
             let emptyPos = puzzleState.indexOf(8);
             let validMoves = [];
@@ -386,7 +435,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (emptyPos >= size) validMoves.push(emptyPos - size);
             if (emptyPos < size * (size - 1)) validMoves.push(emptyPos + size);
             
-            // 過濾掉上一次移動的拼圖，確保每次移動都具備有效打亂的意義
             let filteredMoves = validMoves.filter(pos => puzzleState[pos] !== lastPieceMoved);
             if(filteredMoves.length > 0) {
                 validMoves = filteredMoves;
@@ -421,7 +469,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initPuzzle();
 
     /* =========================================
-       3. 第二關邏輯：綁定崩潰特效
+       4. 第二關邏輯：綁定崩潰特效
        ========================================= */
     const glitchBtns = document.querySelectorAll('.glitch-trigger-btn');
     glitchBtns.forEach(btn => {

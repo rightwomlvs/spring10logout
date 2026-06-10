@@ -148,6 +148,8 @@
 </head>
 <body>
 
+<audio id="bgm-player" src="https://www.dropbox.com/scl/fi/sruhr2uds42qtkmi4y3r0/Ximending_Exit.mp3?rlkey=ickr8ds1nxmusq3vbzuw8yhz8&st=nq54dpsw&dl=1" loop></audio>
+
 <div id="debug-menu">
     <div class="debug-title">🛠️ 維修站</div>
     <button class="debug-btn" onclick="skipTo('prologue')">0. 劇情</button>
@@ -231,7 +233,19 @@
 document.addEventListener("DOMContentLoaded", () => {
     
     /* =========================================
-       0. 開發者跳關邏輯與彩蛋
+       0. 音訊播放與瀏覽器安全限制繞過
+       ========================================= */
+    const bgm = document.getElementById('bgm-player');
+    
+    // 當學員點擊螢幕任何地方時，即刻觸發背景音樂播放 (僅觸發一次)
+    document.addEventListener('click', () => {
+        bgm.play().catch(err => {
+            console.log("音訊自動播放被瀏覽器攔截:", err);
+        });
+    }, { once: true });
+
+    /* =========================================
+       1. 開發者跳關邏輯與彩蛋
        ========================================= */
     let secretClickCount = 0;
     const debugMenu = document.getElementById('debug-menu');
@@ -276,9 +290,9 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     /* =========================================
-       1. 前導劇情打字機與按鈕綁定
+       2. 前導劇情打字機與按鈕綁定
        ========================================= */
-    const storyText = "學院最後一次聚會中，流水席大廚波波貍煮完最後一道菜後，留下紙條：\n\n「未來不再有黃磚路了，\n但願大家走出自己的路……」\n\n接著消失在筵席上。\n\n汪汪在疑似染血的紙條底下發現一張未知圖形。";
+    const storyText = "學院最後一次聚會中，流水席大廚波波貍煮完最後一道菜後，留下紙條：\n\n「未來不再有黃磚路了，\n但願大家走出自己的路……」\n\n接著消失在筵席上。\n\n汪汪在疑似染血紙條底下發現一張未知圖形。";
     const textContainer = document.getElementById("prologue-text");
     const startBtn = document.getElementById("start-puzzle-btn");
     const prologueContainer = document.getElementById("prologue");
@@ -312,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* =========================================
-       2. 第一關邏輯：華容道 (滑塊拼圖)
+       3. 第一關邏輯：華容道 (滑塊拼圖)
        ========================================= */
     const container = document.getElementById('puzzle-container');
     const size = 3;
@@ -349,7 +363,6 @@ document.addEventListener("DOMContentLoaded", () => {
             container.appendChild(piece);
             pieces.push(piece);
         }
-        // 降低難度：將原本隨機打亂的 100 步改為 15 步
         shufflePuzzle(15);
     }
 
@@ -376,7 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function shufflePuzzle(moves) {
-        let lastPieceMoved = -1; // 防止馬上把拼圖推回原位的防呆機制
+        let lastPieceMoved = -1; 
         for (let i = 0; i < moves; i++) {
             let emptyPos = puzzleState.indexOf(8);
             let validMoves = [];
@@ -386,7 +399,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (emptyPos >= size) validMoves.push(emptyPos - size);
             if (emptyPos < size * (size - 1)) validMoves.push(emptyPos + size);
             
-            // 過濾掉上一次移動的拼圖，確保每次移動都具備有效打亂的意義
             let filteredMoves = validMoves.filter(pos => puzzleState[pos] !== lastPieceMoved);
             if(filteredMoves.length > 0) {
                 validMoves = filteredMoves;
@@ -421,7 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initPuzzle();
 
     /* =========================================
-       3. 第二關邏輯：綁定崩潰特效
+       4. 第二關邏輯：綁定崩潰特效
        ========================================= */
     const glitchBtns = document.querySelectorAll('.glitch-trigger-btn');
     glitchBtns.forEach(btn => {

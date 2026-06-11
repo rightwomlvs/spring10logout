@@ -20,6 +20,30 @@
         }
 
         /* =========================================
+           LINE 專屬防呆提示畫面
+           ========================================= */
+        #line-warning {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.95); z-index: 10000;
+            flex-direction: column; justify-content: flex-start; align-items: center;
+            color: #fff; padding: 30px 20px; box-sizing: border-box; text-align: center;
+        }
+        .line-arrow { 
+            font-size: 60px; color: #00ff00; align-self: flex-end; 
+            margin-right: 10px; margin-bottom: 20px; animation: bounce-diagonal 1s infinite; 
+        }
+        .line-text { font-size: 18px; line-height: 1.8; margin-bottom: 40px; letter-spacing: 1px; }
+        .highlight { color: #00ff00; font-weight: bold; font-size: 22px;}
+        .btn-close-line { 
+            background: transparent; color: #888; border: 1px solid #555; 
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;
+        }
+        @keyframes bounce-diagonal { 
+            0%, 100% { transform: translate(0, 0); } 
+            50% { transform: translate(10px, -10px); } 
+        }
+
+        /* =========================================
            遊戲序幕封面 (繞過自動播放限制、同步音效)
            ========================================= */
         #start-overlay {
@@ -120,7 +144,7 @@
         .date-divider span { background-color: rgba(0, 0, 0, 0.15); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
         .system-message { text-align: center; color: #444; font-size: 13px; margin-bottom: 25px; font-weight: bold;}
         .message-row { display: flex; align-items: flex-start; margin-bottom: 20px;}
-        .avatar { width: 45px; height: 45px; background-color: #fff; border-radius: 50%; margin-right: 12px; background-image: url('https://drive.google.com/thumbnail?id=1eFpLiWZ-RRJ7uRp8oql4Ys1AgWotIeKZ&sz=w1000'); background-size: cover; background-position: center 20%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .avatar { width: 45px; height: 45px; background-color: #fff; border-radius: 50%; margin-right: 12px; background-image: url('https://drive.google.com/thumbnail?id=1YRbKcYCue0aomUg2KVytIm81C3ISPYWQ&sz=w1000'); background-size: cover; background-position: center 20%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
         .message-content { display: flex; align-items: flex-end; }
         
         .bubble { background-color: #fff; padding: 15px 12px; border-radius: 18px; font-size: 16px; color: #333; position: relative; line-height: 1.8; box-shadow: 0 1px 2px rgba(0,0,0,0.1); writing-mode: vertical-rl; letter-spacing: 2px; }
@@ -171,7 +195,7 @@
             100% { height: 3px; width: 0%; opacity: 0; }
         }
 
-        /* 黑白雜訊特效 (調整為2秒) */
+        /* 黑白雜訊特效 */
         #tv-noise {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 15; display: none;
             background-color: #222;
@@ -198,111 +222,115 @@
             100% { opacity: 0; }
         }
 
-        /* =========================================
-           最終現實畫面 (使用用戶提供的真實圖片作為背景)
-           ========================================= */
+        /* 最終現實畫面容器 - 已替換為您提供的新磚牆圖片 */
         #final-screen { 
             display: none; width: 100%; height: 100%; 
-            /* 直接載入用戶提供的黑暗交錯堆疊磚牆與霓虹外框原圖 */
-            background-image: url('https://drive.google.com/thumbnail?id=1-K4r2r7dJGJEE47PEtlIB6Qxa4mngh4o&sz=w1000');
+            background-color: #1a1a1a;
+            /* 替換後的 Google Drive 磚牆圖片連結 */
+            background-image: url('https://drive.google.com/thumbnail?id=1-K4r2r7dJGJEE47PEtlIB6Qxa4mngh4o&sz=w1000'); 
             background-size: cover;
             background-position: center;
             padding: 20px; box-sizing: border-box; z-index: 5;
             flex-direction: column; align-items: center; justify-content: center;
-            position: relative;
         }
-
-        /* 牆面霓虹漫射環境光暈 (強化原本圖檔的光暈立體感) */
-        .wall-glow {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 420px; height: 320px;
-            background: radial-gradient(ellipse at center, rgba(0, 255, 255, 0.08) 0%, rgba(224, 68, 255, 0.12) 45%, transparent 75%);
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* 內層獨立文字遮罩容器 */
-        .neon-text-block {
-            position: relative;
-            z-index: 3;
-            display: none; /* 由 JS 控制顯示 */
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            /* 精準設計的深色遮罩底，既能透出原圖的微弱磚縫線條，又能完美遮蓋原圖上原有的文字 */
-            background: rgba(13, 13, 13, 0.85);
-            padding: 25px 35px;
-            border-radius: 12px;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
-            transform: translateY(-2px) scale(0.95); /* 微調垂直位置，完美對齊外框中心點 */
-        }
-
-        /* 空心雙線青藍色霓虹新字體 */
-        .neon-text-main {
-            font-family: "Arial Rounded MT Bold", "Varela Round", Helvetica, sans-serif;
-            font-size: 38px;
-            font-weight: 900;
-            color: transparent;
-            -webkit-text-stroke: 2px #fff;
-            text-shadow: 0 0 8px #fff, 0 0 18px #0ff, 0 0 35px #0ff, 0 0 55px #0ff;
-            letter-spacing: 5px;
-            line-height: 1.2;
-            text-align: center;
-            margin: 4px 0;
+        
+        /* 已完全移除 DOS 綠色游標顯示 */
+        .cursor { 
+            display: none; 
         }
 
         /* =========================================
-           高級非同步「接觸不良」閃爍動畫系統 (Flicker)
+           霓虹燈看板特效 (Neon Sign) - 手機優化與炫光修正
            ========================================= */
+        .neon-board {
+            position: relative;
+            border: 4px solid #fff;
+            border-radius: 15px;
+            padding: 30px; 
+            box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #e044ff, 0 0 40px #e044ff, inset 0 0 10px #e044ff, inset 0 0 20px #e044ff;
+            background-color: rgba(0, 0, 0, 0.7);
+            transform: scale(0.95);
+            display: none; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: flicker-purple-border 4s infinite alternate;
+        }
+
+        /* 右側空心圓角霓虹突起造型 */
+        .neon-board-pointer-shape {
+            position: absolute;
+            top: 50%;
+            right: -2px; 
+            width: 26px;
+            height: 26px;
+            border-top: 4px solid #fff;
+            border-right: 4px solid #fff;
+            transform: translateY(-50%) rotate(45deg);
+            box-shadow: 2px -2px 5px #fff, 5px -5px 15px #e044ff;
+            animation: flicker-purple-border 4s infinite alternate;
+        }
+
+        /* 空心雙線霓虹字體 - 修正炫光過大影響閱讀的問題 */
+        .neon-text-main {
+            font-family: "Arial Rounded MT Bold", "Helvetica Rounded", Arial, sans-serif;
+            font-size: 38px; 
+            font-weight: bold;
+            color: transparent;
+            -webkit-text-stroke: 1.5px #fff;
+            /* 調整發光強度，縮小暈染半徑，使字母內部中空邊緣更清晰 */
+            text-shadow: 0 0 4px #fff, 0 0 8px rgba(255,255,255,0.8), 0 0 15px rgba(0, 255, 255, 0.5); 
+            letter-spacing: 2px;
+            line-height: 1.2;
+            text-align: center;
+            animation: flicker-cyan 3s infinite alternate;
+            margin: 0;
+        }
+
+        @keyframes flicker-purple-border {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #e044ff, 0 0 40px #e044ff, inset 0 0 10px #e044ff, inset 0 0 20px #e044ff;
+                border-color: #fff;
+            }
+            20%, 24%, 55% {
+                box-shadow: 0 0 2px rgba(224, 68, 255, 0.3), inset 0 0 2px rgba(224, 68, 255, 0.3);
+                border-color: #555;
+            }
+        }
         
-        /* 1. 紫色外框與全畫面環境光反射閃爍 */
-        .flicker-ambient {
-            animation: flicker-purple-ambient 4.5s infinite alternate;
-        }
-
-        /* 2. 青藍色核心文字獨立損壞閃爍 (週期不同步，營造獨立感) */
-        .flicker-text {
-            animation: flicker-cyan-text 3.2s infinite alternate;
-        }
-
-        /* 全畫面與外框斷電閃爍 */
-        @keyframes flicker-purple-ambient {
-            0%, 17%, 21%, 23%, 25%, 54%, 58%, 100% {
-                filter: brightness(1) contrast(1) drop-shadow(0 0 10px rgba(224, 68, 255, 0.4));
-            }
-            19%, 24%, 56% {
-                filter: brightness(0.4) contrast(0.85) drop-shadow(0 0 2px rgba(224, 68, 255, 0.1));
-            }
-            55% {
-                filter: brightness(0.8) contrast(0.95);
-            }
-        }
-
-        /* 青藍文字中空雙線斷電閃爍 */
-        @keyframes flicker-cyan-text {
+        @keyframes flicker-cyan {
             0%, 9%, 11%, 49%, 51%, 100% {
-                text-shadow: 0 0 8px #fff, 0 0 18px #0ff, 0 0 35px #0ff, 0 0 55px #0ff;
-                -webkit-text-stroke: 2px #fff;
-                opacity: 1;
+                text-shadow: 0 0 4px #fff, 0 0 8px rgba(255,255,255,0.8), 0 0 15px rgba(0, 255, 255, 0.5);
+                -webkit-text-stroke: 1.5px #fff;
             }
             10%, 50% {
-                text-shadow: 0 0 3px #0ff;
-                -webkit-text-stroke: 2px #3a3a3a; /* 斷電時導電管核心變暗黑 */
-                opacity: 0.25;
+                text-shadow: none;
+                -webkit-text-stroke: 1.5px #444;
             }
         }
     </style>
 </head>
 <body>
 
+<div id="line-warning">
+    <div class="line-arrow">↗</div>
+    <div class="line-text">
+        偵測到您正使用 LINE 內建瀏覽器。<br><br>
+        為確保<span class="highlight">完整遊戲體驗與音效</span>，<br>
+        請點擊右上角的「⋮」或「⠇」，<br>
+        選擇 <span class="highlight">以預設瀏覽器開啟</span><br>
+        (Safari / Chrome)。
+    </div>
+    <button id="btn-close-line" class="btn-close-line">我已了解，繼續瀏覽</button>
+</div>
+
 <audio id="bgm-player" src="https://www.dropbox.com/scl/fi/fjq44ok4pvc4rnqhzn585/Ximending_Exit.mp3?rlkey=gh8ddyh0ll5rm2pxkb5yj2p8b&st=0le8j114&dl=1" loop></audio>
 
 <div id="start-overlay">
     <div class="start-prompt">
         流水席大廚波波狸發來了最後的訊息……<br><br>
-        請開啟裝置聲音以獲得最佳沉浸體驗。
+        請開啟裝置聲音以獲得最佳沉浸體驗。<br>
+        <span style="font-size: 12px; color: #ffaa00;"></span>
     </div>
     <button id="btn-start" class="btn-enter-game">點擊入席</button>
 </div>
@@ -318,7 +346,7 @@
 <div id="app-container">
     
     <div id="prologue">
-        <img id="prologue-img" src="https://drive.google.com/thumbnail?id=1eFpLiWZ-RRJ7uRp8oql4Ys1AgWotIeKZ&sz=w1000" alt="大廚波波貍">
+        <img id="prologue-img" src="https://drive.google.com/thumbnail?id=1YRbKcYCue0aomUg2KVytIm81C3ISPYWQ&sz=w1000" alt="大廚波波貍">
         <div id="prologue-text"></div>
         <div id="btn-wrapper">
             <button id="start-puzzle-btn" class="btn-prologue" style="display: none;">查看未知圖形</button>
@@ -386,11 +414,11 @@
         <div id="tv-noise"></div>
 
         <div id="final-screen">
-            <div class="wall-glow"></div>
             
-            <div id="neon-board" class="neon-text-block flicker-text">
-                <div class="neon-text-main">NEW GAME:</div>
+            <div id="neon-board" class="neon-board">
+                <div class="neon-text-main">NEW GAME</div>
                 <div class="neon-text-main">REALITY</div>
+                <div class="neon-board-pointer-shape"></div>
             </div>
         </div>
     </div>
@@ -400,6 +428,18 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     
+    // =========================================
+    // LINE 瀏覽器偵測與防呆關閉
+    // =========================================
+    const lineWarning = document.getElementById('line-warning');
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    if (ua.indexOf("Line") > -1) {
+        lineWarning.style.display = "flex";
+    }
+    document.getElementById('btn-close-line').addEventListener('click', () => {
+        lineWarning.style.display = "none";
+    });
+
     const bgm = document.getElementById('bgm-player');
     const startOverlay = document.getElementById('start-overlay');
     const btnStart = document.getElementById('btn-start');
@@ -412,6 +452,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function initAudio() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
         }
     }
 
@@ -432,14 +475,13 @@ document.addEventListener("DOMContentLoaded", () => {
     function playStatic(duration) {
         if(!audioCtx) return;
         const bufferSize = audioCtx.sampleRate * duration;
-        const buffer = document.createElement('audio'); // 備用或利用 Web Audio 產生
-        const audioBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = audioBuffer.getChannelData(0);
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) {
             data[i] = Math.random() * 2 - 1;
         }
         const noise = audioCtx.createBufferSource();
-        noise.buffer = audioBuffer;
+        noise.buffer = buffer;
         const gainNode = audioCtx.createGain();
         gainNode.gain.value = 0.3;
         noise.connect(gainNode);
@@ -449,7 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* =========================================
-       0. 序幕點擊事件：啟動音效與打字機
+       0. 序幕點擊事件
        ========================================= */
     btnStart.addEventListener('click', () => {
         initAudio();
@@ -476,7 +518,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     window.triggerSystemCrash = function() {
-        initAudio();
+        initAudio(); 
+        
         bgm.pause();
 
         document.getElementById('stage-glitch').style.display = 'flex';
@@ -488,33 +531,32 @@ document.addEventListener("DOMContentLoaded", () => {
         
         glitchScreen.style.display = 'none';
         finalScreen.style.display = 'none';
-        finalScreen.classList.remove('flicker-ambient');
         tvLine.classList.remove('anim-tv-line');
         tvNoise.classList.remove('anim-tv-noise');
 
-        // 階段一：顯示 GAME OVER 故障字
         setTimeout(() => { glitchScreen.style.display = 'flex'; }, 800);
         
-        // 階段二：畫面壓縮成一條線 + 嗶聲
         setTimeout(() => { 
             glitchScreen.style.display = 'none'; 
             tvLine.classList.add('anim-tv-line');
             playBeep(0.5); 
         }, 4500);
 
-        // 階段三：爆出全螢幕黑白雜訊 + 2秒沙沙聲
         setTimeout(() => { 
             tvNoise.classList.add('anim-tv-noise');
             playStatic(2.0); 
         }, 5000); 
 
-        // 階段四：進入真實相片畫面，同步附加紫色外框與全場景閃爍、顯示新文字
+        // 進入交錯磚牆畫面
         setTimeout(() => { 
             finalScreen.style.display = 'flex'; 
-            finalScreen.classList.add('flicker-ambient'); // 使整張相片及框線產生閃爍
-            neonBoard.style.display = 'flex';            // 顯示文字
+            neonBoard.style.display = 'none';
         }, 7200); 
 
+        // 亮起優化後的霓虹看板
+        setTimeout(() => { 
+            neonBoard.style.display = 'flex'; 
+        }, 7500); // 縮短全黑等待時間，讓切換更流暢
     };
 
     window.skipTo = function(targetId) {
@@ -541,7 +583,7 @@ document.addEventListener("DOMContentLoaded", () => {
     /* =========================================
        2. 前導劇情打字機與按鈕綁定
        ========================================= */
-    const storyText = "學院最後一次聚會中，流水席大廚波波貍煮完最後一道菜後，留下紙條：\n\n「未來不再有黃磚路了，\但願大家走出自己的路……」\n\n接著消失在筵席上。\n\n汪汪在疑似染血的紙條底下發現一張未知圖形。";
+    const storyText = "學院最後一次聚會中，流水席大廚波波貍煮完最後一道菜後，留下紙條：\n\n「未來不再有黃磚路了，\n但願大家走出自己的路……」\n\n接著消失在筵席上。\n\n汪汪在疑似染血的紙條底下發現一張未知圖形。";
     const textContainer = document.getElementById("prologue-text");
     const startBtn = document.getElementById("start-puzzle-btn");
     const prologueContainer = document.getElementById("prologue");
